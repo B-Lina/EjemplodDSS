@@ -20,8 +20,7 @@ function guardar(){
       body: raw,
       redirect: "follow"
     };
- 
-    //fetch("https://ejemplodss.netlify.app/netlify/funciones/usuarios", requestOptions)
+    
     fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios", requestOptions)
     
       .then((response) => response.text())

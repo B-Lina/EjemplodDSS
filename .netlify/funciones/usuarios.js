@@ -62,7 +62,7 @@ app.get("/", (req, res) => {
 });
 
 // Ruta para las operaciones reales
-app.use("/", usuroutes);
+app.use("/usuarios", usuroutes);
 
 module.exports.handler = serverless(app);
 

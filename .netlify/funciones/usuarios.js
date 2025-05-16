@@ -29,10 +29,19 @@ const serverless = require("serverless-http");
 const usuroutes = require("../../backend/routes/usuariosrutas.js");
 
 const app = express();
+const router = express.Router();
+
 app.use(cors());
 app.use(express.json());
 
-// Monta directamente el router
-app.use("/", usuroutes);
+// Montamos las rutas en el router
+router.get("/", (req, res) => {
+  res.json({ message: "Función usuarios activa" });
+});
+router.use("/usuarios", usuroutes);
+
+// Montamos el router bajo la raíz
+app.use("/", router);
 
 module.exports.handler = serverless(app);
+

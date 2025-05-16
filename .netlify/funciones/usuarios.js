@@ -1,4 +1,4 @@
-var express = require('express');
+/*var express = require('express');
 var cors = require("cors");
 var serverless = require ('serverless-http');
 var port = process.env.PORT || 5000;
@@ -21,4 +21,18 @@ router.use ("/usuarios",usuroutes);
 var handler = app.use('/.netlify/functions/usuarios', router);
 
 // probar module.exports.handler = serverless(app);
-exports.handler = serverless (app);
+exports.handler = serverless (app);*/
+
+const express = require("express");
+const cors = require("cors");
+const serverless = require("serverless-http");
+const usuroutes = require("../../backend/routes/usuariosrutas.js");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Monta directamente el router
+app.use("/", usuroutes);
+
+module.exports.handler = serverless(app);

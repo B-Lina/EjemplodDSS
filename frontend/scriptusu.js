@@ -39,7 +39,7 @@ function cargar(resultado){
     }
     document.getElementById("rta").innerHTML = salida;
 }
-/*
+
 function listar(){
     event.preventDefault();
     const requestOptions = {
@@ -57,34 +57,4 @@ function listar(){
         cargar(result))
       .catch((error) =>
         console.error(error));
-}*/
-
-function listar(){
-  event.preventDefault();
-  const requestOptions = {
-    method: "GET",
-    redirect: "follow"
-  };
-  let ndoc = document.getElementById("numdoc").value;
-  let url = "https://ejemplodss.netlify.app/.netlify/functions/usuarios?iden=" + ndoc;
-
-  fetch(url, requestOptions)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.text();
-    })
-    .then((result) => {
-      try {
-        cargar(result);
-      } catch (e) {
-        console.error("Error al procesar JSON: ", e.message, result);
-      }
-    })
-    .catch((error) => {
-      console.error("Error en la petición: ", error);
-    });
 }
-
-

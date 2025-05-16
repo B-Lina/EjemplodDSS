@@ -21,7 +21,7 @@ class UsuariosController{
             res.status(500).send(err.message);
         }
      }
- 
+/*
     async ingresar(req,res){
         try{
             const admin = require('./firebaseAdmin');
@@ -30,7 +30,7 @@ class UsuariosController{
             console.log ("Documento de identidad:... " + dni);
             console.log ("Nombres con apellidos:" + nombre + " " + apellidos);
             console.log ("email: "+ email);
-            */
+            
             //Asignando nombre del documento
             //const docRef = await admin.firestore().collection('users').doc("user654").set(req.body);
             //Adicionando con nombre de documento asignado dinámicamente
@@ -40,5 +40,28 @@ class UsuariosController{
             res.status(500).send(err.message);
         }
     }
+    */
+
+    async ingresar(req, res) {
+        try {
+          const admin = require('./firebaseAdmin');
+          const data = req.body;
+      
+          // Validación simple de los campos requeridos
+          if (!data.dni || !data.nombre || !data.apellidos || !data.email) {
+            return res.status(400).json({ error: "Faltan campos requeridos" });
+          }
+      
+          // Inserta el nuevo usuario con ID generado automáticamente
+          await admin.firestore().collection('users').add(data);
+      
+          // Envía respuesta JSON clara
+          return res.status(200).json({ mensaje: "Usuario agregado exitosamente" });
+        } catch (err) {
+          console.error("Error al ingresar usuario:", err);
+          return res.status(500).json({ error: err.message });
+        }
+      }
+      
 }
 module.exports = new UsuariosController();

@@ -6,7 +6,7 @@ var app = express();
 var usuroutes = require("../../backend/routes/usuariosrutas.js");
  
 //Ejemplo de función con manejo posterior de persistencia
-//segundo comentario 
+//segundo comentario
  
 app.use(express.json());
 app.use(cors());
@@ -14,11 +14,5 @@ app.use(cors());
 var router = express.Router();
 router.use ("/usuarios",usuroutes);
  
-//var handler = app.use('/.netlify/functions/usuarios', usuroutes);
-
-//app.use('/.netlify/functions/usuarios', usuroutes);
-//var handler = app.use ('/.netlify/function',router)
-var handler = app.use('/.netlify/functions/usuarios', router);
-
-// probar module.exports.handler = serverless(app);
+var handler = app.use ('/.netlify/functions',router);
 exports.handler = serverless (app);

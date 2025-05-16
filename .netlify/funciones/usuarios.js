@@ -1,4 +1,4 @@
-/*var express = require('express');
+var express = require('express');
 var cors = require("cors");
 var serverless = require ('serverless-http');
 var port = process.env.PORT || 5000;
@@ -22,48 +22,3 @@ var handler = app.use('/.netlify/functions/usuarios', router);
 
 // probar module.exports.handler = serverless(app);
 exports.handler = serverless (app);
-
-const express = require("express");
-const cors = require("cors");
-const serverless = require("serverless-http");
-const usuroutes = require("../../backend/routes/usuariosrutas.js");
-
-const app = express();
-const router = express.Router();
-
-app.use(cors());
-app.use(express.json());
-
-// Montamos las rutas en el router
-router.get("/", (req, res) => {
-  res.json({ message: "Función usuarios activa" });
-});
-router.use("/usuarios", usuroutes);
-
-// Montamos el router bajo la raíz
-app.use("/", router);
-
-module.exports.handler = serverless(app);
-
-*/
-
-const express = require("express");
-const cors = require("cors");
-const serverless = require("serverless-http");
-const usuroutes = require("../../backend/routes/usuariosrutas.js");
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Ruta de prueba para que no marque error al acceder directamente
-app.get("/", (req, res) => {
-  res.json({ mensaje: "Función usuarios está activa." });
-});
-
-// Ruta para las operaciones reales
-app.use("/usuarios", usuroutes);
-
-module.exports.handler = serverless(app);
-
-

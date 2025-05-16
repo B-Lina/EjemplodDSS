@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const usuariosmodel = require("../modelo/usuariosmodelo.js");
  
-router.get("/",usuariosmodel.consultarDetalle);
-router.post("/",usuariosmodel.ingresar);
+router.get("/",usuariosmodelo.consultarDetalle);
+router.post("/",usuariosmodelo.ingresar);
  
 /* Ejemplo con parámetros */
  
 router.route("/:iden")
-.get(usuariosmodel.consultarDetalle);
+.get(usuariosmodelo.consultarDetalle);
 /*
 .put(usuarioscontroller.actualizar)
 .delete(usuarioscontroller.borrar);

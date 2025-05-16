@@ -21,11 +21,11 @@ function guardar(){
       redirect: "follow"
     };
     
-    fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios/usuarios", requestOptions)
+    fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios", requestOptions)
     
       .then((response) => response.text())
       .then((result) => console.log(result))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); 
 }
  
 function cargar(resultado){

@@ -1,3 +1,43 @@
+function guardar() {
+  event.preventDefault();
+  
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  let raw = JSON.stringify({
+      "dni": document.getElementById("dni").value,
+      "nombre": document.getElementById("nombre").value,
+      "apellidos": document.getElementById("apellidos").value,
+      "email": document.getElementById("correo").value
+  });
+
+  let requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+  };
+  
+  fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios/usuarios", requestOptions)
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json(); // Cambiado a json() en lugar de text()
+      })
+      .then((result) => {
+          console.log("Usuario creado:", result);
+          alert("Usuario guardado exitosamente!");
+          // Opcional: Limpiar el formulario después de guardar
+          document.getElementById("adicionarEstudiante").reset();
+      })
+      .catch((error) => {
+          console.error("Error al guardar:", error);
+          alert("Error al guardar el usuario: " + error.message);
+      });
+}
+
+/*
 function guardar(){
  
     let apellidos='';
@@ -21,12 +61,13 @@ function guardar(){
       redirect: "follow"
     };
     
-    fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios", requestOptions)
+    fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios/usuarios", requestOptions)
     
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.error(error)); 
 }
+*/
  
 function cargar(resultado){
     let transformado = JSON.parse(resultado);

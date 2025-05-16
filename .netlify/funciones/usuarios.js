@@ -18,7 +18,7 @@ router.use ("/usuarios",usuroutes);
 
 //app.use('/.netlify/functions/usuarios', usuroutes);
 //var handler = app.use ('/.netlify/function',router)
-var handler = app.use('/.netlify/functions/usuarios', router);
+var handler = app.use('/.netlify/functiones/usuarios', router);
 
 // probar module.exports.handler = serverless(app);
 exports.handler = serverless (app);

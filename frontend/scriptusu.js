@@ -30,7 +30,7 @@ function guardar() {
           alert("Usuario guardado exitosamente!");
           // Opcional: Limpiar el formulario después de guardar
           document.getElementById("adicionarEstudiante").reset();
-      })
+      })  
       .catch((error) => {
           console.error("Error al guardar:", error);
           alert("Error al guardar el usuario: " + error.message);

@@ -19,6 +19,14 @@ function guardar() {
   };
   
   fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios/usuarios?iden=", requestOptions)
+
+      .then((response) =>
+        response.text())
+      .then((result) =>
+        cargar(result))
+      .catch((error) =>
+        console.error(error));
+/*
       .then((response) => {
           if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
@@ -35,6 +43,7 @@ function guardar() {
           console.error("Error al guardar:", error);
           alert("Error al guardar el usuario: " + error.message);
       });
+      */
 }
 
 /*

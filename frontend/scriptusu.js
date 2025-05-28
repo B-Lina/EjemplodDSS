@@ -18,7 +18,7 @@ function guardar() {
       redirect: "follow"
   };
   
-  fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios", requestOptions)
+  fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios/usuarios?iden=", requestOptions)
       .then((response) => {
           if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);

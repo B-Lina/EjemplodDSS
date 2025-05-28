@@ -8,7 +8,8 @@ router.post("/",usuariosmodel.ingresar);
 /* Ejemplo con parámetros */
  
 router.route("/:iden")
-.get(usuariosmodel.consultarDetalle);
+.get(usuariosmodel.consultarDetalle)
+.post(usuariosmodel.ingresar);
 /*
 .put(usuarioscontroller.actualizar)
 .delete(usuarioscontroller.borrar);

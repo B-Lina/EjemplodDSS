@@ -9,7 +9,7 @@ router.post("/",usuariosmodel.ingresar);
  
 router.route("/:iden")
 .get(usuariosmodel.consultarDetalle)
-.post(usuariosmodel.ingresar);
+//.post(usuariosmodel.ingresar);
 /*
 .put(usuarioscontroller.actualizar)
 .delete(usuarioscontroller.borrar);

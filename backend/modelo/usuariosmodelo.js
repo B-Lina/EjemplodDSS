@@ -38,7 +38,7 @@ class UsuariosController{
             //const docRef = await admin.firestore().collection('users').add(req.body);
             res.status(200).send ("Usuario agregado");
         }catch (err){
-            res.status(500).send(err.message);
+            res.status(500).send("Me retiro");
         }
     }
 }

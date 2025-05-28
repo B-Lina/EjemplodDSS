@@ -19,7 +19,6 @@ function guardar() {
   };
   
   fetch("https://ejemplodss.netlify.app/.netlify/functions/usuarios", requestOptions)
-
       .then((response) =>
         response.text())
       .then((result) =>

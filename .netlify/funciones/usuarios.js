@@ -1,70 +1,199 @@
-/*
+const admin = require('firebase-admin');
 
-CODIGO JUANPABLO 
+// Inicializar Firebase Admin
+if (!admin.apps.length) {
+    try {
+        console.log('Inicializando Firebase Admin...');
+        
+        // Verificar variables de entorno
+        if (!process.env.FIREBASE_PROJECT_ID) {
+            throw new Error('FIREBASE_PROJECT_ID no configurado');
+        }
+        if (!process.env.FIREBASE_CLIENT_EMAIL) {
+            throw new Error('FIREBASE_CLIENT_EMAIL no configurado');
+        }
+        if (!process.env.FIREBASE_PRIVATE_KEY) {
+            throw new Error('FIREBASE_PRIVATE_KEY no configurado');
+        }
 
-var express = require('express');
-var cors = require("cors");
-var serverless = require ('serverless-http');
-var port = process.env.PORT || 5000;
-var app = express();
-var usuroutes = require("../../backend/routes/usuariosrutas.js");
- 
-//Ejemplo de función con manejo posterior de persistencia
-//segundo comentario
- 
-app.use(express.json());
-app.use(cors());
- 
-var router = express.Router();
-router.use ("/usuarios",usuroutes);
- 
-var handler = app.use ('/.netlify/functions/usuarios',router);
-exports.handler = serverless (app);
-*/
+        const privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+        
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: privateKey,
+            })
+        });
+        
+        console.log('Firebase Admin inicializado correctamente');
+    } catch (error) {
+        console.error('Error al inicializar Firebase:', error.message);
+    }
+}
 
-const express = require('express');
-const cors = require("cors");
-const serverless = require('serverless-http');
+exports.handler = async (event, context) => {
+    // Headers CORS
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Content-Type': 'application/json'
+    };
 
-// Importar las rutas
-const usuariosRoutes = require("../../backend/routes/usuariosrutas.js");
+    console.log('=== NUEVA PETICIÓN ===');
+    console.log('Method:', event.httpMethod);
+    console.log('Path:', event.path);
+    console.log('Headers:', event.headers);
+    console.log('Body (raw):', event.body);
 
-// Crear la app de Express
-const app = express();
+    // Manejar preflight OPTIONS
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers,
+            body: ''
+        };
+    }
 
-// Middleware
-app.use(express.json());
-app.use(cors({
-    origin: '*', // En producción, especifica tu dominio
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+    try {
+        // Ruta de prueba
+        if (event.httpMethod === 'GET' && event.path.includes('/test')) {
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({
+                    message: 'Función de prueba funcionando',
+                    timestamp: new Date().toISOString(),
+                    env_vars: {
+                        firebase_project: !!process.env.FIREBASE_PROJECT_ID,
+                        firebase_email: !!process.env.FIREBASE_CLIENT_EMAIL,
+                        firebase_key: !!process.env.FIREBASE_PRIVATE_KEY
+                    }
+                })
+            };
+        }
 
-// Logging middleware para debug
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path}`, req.body);
-    next();
-});
+        // GET - Consultar usuario
+        if (event.httpMethod === 'GET') {
+            const queryParams = event.queryStringParameters || {};
+            const iden = queryParams.iden;
 
-// Montar las rutas en la ruta base
-app.use('/.netlify/functions/usuarios', usuariosRoutes);
+            console.log('Consultando usuario con ID:', iden);
 
-// Ruta de prueba
-app.get('/.netlify/functions/usuarios/test', (req, res) => {
-    res.json({ message: 'Función funcionando correctamente', timestamp: new Date().toISOString() });
-});
+            if (!iden) {
+                return {
+                    statusCode: 400,
+                    headers,
+                    body: JSON.stringify({ error: 'Parámetro iden requerido' })
+                };
+            }
 
-// Manejo de errores
-app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(500).json({ error: err.message });
-});
+            const userDoc = await admin.firestore().collection('users').doc(iden).get();
 
-// Manejo de rutas no encontradas
-app.use((req, res) => {
-    console.log('Ruta no encontrada:', req.path);
-    res.status(404).json({ error: 'Ruta no encontrada', path: req.path });
-});
+            if (!userDoc.exists) {
+                return {
+                    statusCode: 404,
+                    headers,
+                    body: JSON.stringify({ error: 'Usuario no encontrado: ' + iden })
+                };
+            }
 
-// Exportar como función serverless
-module.exports.handler = serverless(app);
+            const userData = userDoc.data();
+            console.log('Usuario encontrado:', userData);
+
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify(userData)
+            };
+        }
+
+        // POST - Crear usuario
+        if (event.httpMethod === 'POST') {
+            console.log('=== CREANDO USUARIO ===');
+            
+            let body;
+            try {
+                body = JSON.parse(event.body || '{}');
+                console.log('Body parseado:', body);
+            } catch (parseError) {
+                console.error('Error al parsear JSON:', parseError);
+                return {
+                    statusCode: 400,
+                    headers,
+                    body: JSON.stringify({ 
+                        error: 'JSON inválido',
+                        received: event.body
+                    })
+                };
+            }
+
+            const { dni, nombre, apellidos, email } = body;
+
+            console.log('Datos extraídos:');
+            console.log('- dni:', dni, typeof dni);
+            console.log('- nombre:', nombre, typeof nombre);
+            console.log('- apellidos:', apellidos, typeof apellidos);
+            console.log('- email:', email, typeof email);
+
+            // Validar campos requeridos
+            if (!dni || !nombre || !apellidos || !email) {
+                console.log('Validación fallida');
+                return {
+                    statusCode: 400,
+                    headers,
+                    body: JSON.stringify({
+                        error: 'Todos los campos son requeridos: dni, nombre, apellidos, email',
+                        received: { dni: !!dni, nombre: !!nombre, apellidos: !!apellidos, email: !!email },
+                        values: { dni, nombre, apellidos, email }
+                    })
+                };
+            }
+
+            // Crear objeto usuario
+            const userData = {
+                dni: dni.toString(),
+                nombre: nombre.toString(),
+                apellidos: apellidos.toString(),
+                email: email.toString(),
+                fechaCreacion: new Date().toISOString()
+            };
+
+            console.log('Guardando en Firebase:', userData);
+
+            // Guardar en Firestore
+            await admin.firestore().collection('users').doc(dni.toString()).set(userData);
+
+            console.log('Usuario guardado exitosamente');
+
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({
+                    message: 'Usuario creado exitosamente',
+                    id: dni,
+                    data: userData
+                })
+            };
+        }
+
+        // Método no permitido
+        return {
+            statusCode: 405,
+            headers,
+            body: JSON.stringify({ error: 'Método no permitido: ' + event.httpMethod })
+        };
+
+    } catch (error) {
+        console.error('Error en la función:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({
+                error: error.message,
+                stack: error.stack
+            })
+        };
+    }
+};

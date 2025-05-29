@@ -55,7 +55,6 @@ exports.handler = async (event, context) => {
             body: ''
         };
     }
-
     try {
         // Ruta de prueba
         if (event.httpMethod === 'GET' && event.path.includes('/test')) {

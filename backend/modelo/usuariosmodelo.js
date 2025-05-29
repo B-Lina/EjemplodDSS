@@ -19,7 +19,10 @@ class UsuariosController{
             res.status(500).send(err.message);
         }
      }
+
+    
  
+     /*
     async ingresar(req,res){
         try{
             const admin = require('./firebaseAdmin');
@@ -39,5 +42,54 @@ class UsuariosController{
             console.log("Usuario en catch/error ")
         }
     }
+    
 }
+module.exports = new UsuariosController();
+
+*/
+
+    async ingresar(req, res) {
+            try {
+                const admin = require('./firebaseAdmin');
+                
+                const { dni, nombre, apellidos, email } = req.body;
+                
+                // Validar datos requeridos
+                if (!dni || !nombre || !apellidos || !email) {
+                    return res.status(400).json({ 
+                        error: 'Todos los campos son requeridos: dni, nombre, apellidos, email' 
+                    });
+                }
+
+                console.log("Datos recibidos:");
+                console.log("Documento de identidad:", dni);
+                console.log("Nombres con apellidos:", nombre + " " + apellidos);
+                console.log("email:", email);
+
+                // Crear el objeto usuario
+                const userData = {
+                    dni: dni,
+                    nombre: nombre,
+                    apellidos: apellidos,
+                    email: email,
+                    fechaCreacion: new Date().toISOString()
+                };
+
+                // Guardar en Firestore usando el DNI como ID del documento
+                await admin.firestore().collection('users').doc(dni).set(userData);
+                
+                console.log("Usuario guardado exitosamente con ID:", dni);
+                
+                res.status(200).json({ 
+                    message: "Usuario agregado exitosamente",
+                    id: dni,
+                    data: userData
+                });
+                
+            } catch (err) {
+                console.error("Error al guardar usuario:", err);
+                res.status(500).json({ error: err.message });
+            }
+        }
+    }
 module.exports = new UsuariosController();

@@ -1,6 +1,28 @@
 function guardar() {
   event.preventDefault();
   
+      // Validar campos antes de enviar
+    const dni = document.getElementById("dni").value.trim();
+    const nombre = document.getElementById("nombre").value.trim();
+    const apellidos = document.getElementById("apellidos").value.trim();
+    const email = document.getElementById("correo").value.trim();
+    
+    if (!dni || !nombre || !apellidos || !email) {
+        alert("Todos los campos son requeridos");
+        return;
+    }
+    
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    let raw = JSON.stringify({
+        "dni": dni,
+        "nombre": nombre,
+        "apellidos": apellidos,
+        "email": email
+    });
+
+  /*
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -10,6 +32,7 @@ function guardar() {
       "apellidos": document.getElementById("apellidos").value,
       "email": document.getElementById("correo").value
   });
+  */
 
   let requestOptions = {
       method: "POST",
